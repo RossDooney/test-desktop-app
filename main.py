@@ -6,6 +6,11 @@ from numpy import random
 bg_color = "#3d6466"
 
 
+def clear_widgets(frame):
+    for widget in frame.winfo_children():
+        widget.destroy()
+
+
 def fetch_db():
     connection = sqlite3.connect("data/recipes.db")
     cursor = connection.cursor()
@@ -37,6 +42,7 @@ def pre_processes(table_name, table_records):
 
 
 def load_frame1():
+    clear_widgets(frame2)
     frame1.tkraise()
     frame1.pack_propagate(False)
 
@@ -68,6 +74,7 @@ def load_frame1():
 
 
 def load_frame2():
+    clear_widgets(frame1)
     frame2.tkraise()
     table_name, table_records = fetch_db()
     title, ingredients = pre_processes(table_name, table_records)
@@ -89,10 +96,10 @@ def load_frame2():
         tk.Label(
             frame2,
             text=i,
-            bg=bg_color,
+            bg="#28393a",
             fg="white",
             font=("TkMenuFont", 12),
-        ).pack()
+        ).pack(fill="both")
     tk.Button(
         frame2,
         text="Back",
@@ -115,7 +122,7 @@ frame1 = tk.Frame(root, width=500, height=600, bg=bg_color)
 frame2 = tk.Frame(root, bg=bg_color)
 
 for frame in (frame1, frame2):
-    frame.grid(row=0, column=0)
+    frame.grid(row=0, column=0, sticky="nesw")
 
 load_frame1()
 
