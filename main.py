@@ -1,7 +1,39 @@
 import tkinter as tk
 from PIL import ImageTk
+import sqlite3
+from numpy import random
 
 bg_color = "#3d6466"
+
+
+def fetch_db():
+    connection = sqlite3.connect("data/recipes.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM sqlite_schema WHERE type='table';")
+    all_tables = cursor.fetchall()
+    idx = random.randint(0, len(all_tables) - 1)
+
+    table_name = all_tables[idx][1]
+
+    cursor.execute("SELECT * FROM " + table_name + ";")
+    table_records = cursor.fetchall()
+
+    connection.close()
+
+    return table_name, table_records
+
+
+def pre_processes(table_name, table_records):
+    title = table_name[:-6]
+    title = "".join([char if char.islower() else " " + char for char in title])
+
+    ingredients = []
+
+    for i in table_records:
+        name, qty, unit = i[1], i[2], i[3]
+        ingredients.append(qty + " " + unit + "of " + name)
+
+    return title, ingredients
 
 
 def load_frame1():
@@ -35,7 +67,8 @@ def load_frame1():
 
 
 def load_frame2():
-    print("asd")
+    table_name, table_records = fetch_db()
+    title, ingredients = pre_processes(table_name, table_records)
 
 
 # initiallize app
